@@ -1,16 +1,20 @@
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import './login.css'
+import {loginCall} from "../../apiCalls";
+import {AuthContext} from "../../context/AuthContext";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Login() {
     const email=useRef();
     const password=useRef();
+    const {user, isFetching, error, dispatch} = useContext (AuthContext);
 
     const handleClick=(e)=>{
         e.preventDefault();
-        console.log("0000000000000000000000000000000");
-
-        console.log(email);
+        loginCall({email:email.current.value, password:password.current.value}, dispatch)
     }
+    console.log(user);
+
     return (
         <div className='login'>
             <div className="loginWrapper">
@@ -22,11 +26,27 @@ export default function Login() {
                 </div>
                 <div className="loginRight">
                     <form className="loginBox" onSubmit={handleClick}>
-                        <input placeholder="Email" type="email" required  className="loginInput" ref={email}/>
-                        <input placeholder="Password" type="password" required className="loginInput" ref={password} />
-                        <button className="loginButton" type="submit">Log In</button>
+                        <input 
+                            placeholder="Email" 
+                            type="email"   
+                            className="loginInput" 
+                            required ref={email}
+                        />
+                        <input 
+                            placeholder="Password" 
+                            type="password"  
+                            minLength="6" 
+                            className="loginInput" 
+                            required ref={password} 
+                        />
+                        <button className="loginButton" type="submit" disabled={isFetching}>
+                            {isFetching ?  (<CircularProgress color="white" size= "20px" />)  : ("Log In")}
+                        </button>
                         <span className="loginForgot">Forgot Password?</span>
-                        <span className="loginRegisterButton">Create a New Account</span>
+                        {/* <span className="loginRegisterButton">Create a New Account</span> */}
+                        <button className="loginRegisterButton">
+                            {isFetching ?  (<CircularProgress color="white" size= "20px" />)  : ("Create a New Account")}
+                        </button>
                     </form>
                 </div>
             </div>
